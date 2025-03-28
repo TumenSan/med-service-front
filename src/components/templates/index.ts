@@ -1,0 +1,1 @@
+export { TraditionalMedicalReport as TraditionalMedicalReport } from './TraditionalMedicalReport';

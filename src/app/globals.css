@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.medical-report {
+  background-color: #fafafa;
+  border: 1px solid #e0e0e0;
+  line-height: 1.6;
+}
+
+@media print {
+  .medical-report {
+    border: none;
+    background-color: transparent;
+    padding: 0;
+  }
+}
