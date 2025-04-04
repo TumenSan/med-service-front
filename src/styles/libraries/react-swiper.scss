@@ -1,0 +1,28 @@
+.swiper-button-prev,
+.swiper-button-next {
+  width: 48px !important;
+  height: 48px !important;
+
+  border-radius: 48px;
+  background: var(--color-light);
+  box-shadow: 0px 3px 10px 0px rgba(38, 51, 77, 0.07);
+
+  background-size: auto;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  user-select: none;
+
+  &::after {
+    display: none;
+  }
+}
+
+.swiper-button-prev {
+  background-image: url('~assets/images/png/arrow-right.png');
+  transform: rotate(180deg);
+}
+
+.swiper-button-next {
+  background-image: url('~assets/images/png/arrow-right.png');
+}

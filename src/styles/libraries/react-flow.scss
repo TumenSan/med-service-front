@@ -1,0 +1,91 @@
+@use 'styles/common/mixins' as mixins;
+@import 'reactflow/dist/style.css';
+
+// Outer container
+.react-flow {
+  background-color: var(--color-bg-light);
+
+  &.crosshair .react-flow__renderer .react-flow__pane {
+    cursor: crosshair;
+  }
+}
+
+// Inner container.
+.react-flow__renderer {
+}
+
+// Zoom & pan pane
+.react-flow__zoompane {
+}
+
+// Renderer
+.react-flow__renderer {
+  // cursor: inherit !important;
+}
+
+// Pane
+.react-flow__pane {
+  // cursor: inherit !important;
+}
+
+// Selection pane
+.react-flow__selectionpane {
+}
+
+// User selection
+.react-flow__selection {
+}
+
+// Edges wrapper
+.react-flow__edges {
+}
+
+// Edge element
+.react-flow__edge {
+  // is added when edge is selected
+  & .selected {
+  }
+
+  // is added when edge is animated
+  & .animated {
+  }
+}
+
+// Node element
+.react-flow__node {
+  &:hover {
+    .react-flow__handle {
+      opacity: 1;
+    }
+  }
+}
+
+// Handle component
+.react-flow__handle {
+  opacity: 0;
+
+  @include mixins.transition(ease 0.3s all);
+
+  &:hover,
+  &:focus,
+  &:active {
+    opacity: 1;
+  }
+}
+
+// Resize handle component
+.react-flow__resize-control.handle {
+  height: 8px !important;
+  width: 8px !important;
+  background: var(--color-light) !important;
+  border: 1px solid var(--color-primary) !important;
+}
+
+// Resize line component
+// .react-flow__resize-control.line {
+//   display: none;
+// }
+
+// Custom nodes containers
+.react-flow__node-mindMapNode {
+}

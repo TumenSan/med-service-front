@@ -1,6 +1,8 @@
 import React from 'react';
 import { PatientSection, ExaminationSection, ResultsSection } from '@/components/MedicalReport';
 
+import { Button } from '../atoms'
+
 interface MedicalData {
   patient: {
     fullName: string;
@@ -73,6 +75,15 @@ export const TraditionalMedicalReport = () => {
       <div className="mt-8 pt-4 border-t border-gray-300">
         <p className="text-sm text-gray-600">Дата формирования: {new Date().toLocaleDateString()}</p>
       </div>
+
+      <Button
+        type='button'
+        variant='secondary'
+        size='small'
+        wide
+        title={'asd'}
+        isDisabled={false}
+      />
     </div>
   );
 };

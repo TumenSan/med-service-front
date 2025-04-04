@@ -1,0 +1,38 @@
+.custom-select__control {
+  min-height: auto !important;
+
+  overflow: 'hidden' !important;
+}
+
+.custom-select__indicator-separator {
+  display: none !important;
+}
+
+.custom-select__clear-indicator {
+  display: none !important;
+}
+
+.custom-select__menu {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  overflow: hidden !important;
+}
+
+.custom-select__value-container {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.custom-select__dropdown-indicator {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  height: 24px;
+  width: 24px;
+
+  & svg {
+    height: 100%;
+    width: 100%;
+  }
+}

@@ -1,0 +1,14 @@
+// common.
+@use 'common/reset.scss';
+@use 'common/global.scss';
+@use 'common/constants.scss';
+
+// fonts.
+// @use 'assets/fonts/Roboto/stylesheet.scss';
+
+// libraries.
+@use 'libraries/tailwind.scss';
+@use 'libraries/react-flow.scss';
+@use 'libraries/react-select.scss';
+@use 'libraries/react-toastify.scss';
+@use 'libraries/react-swiper.scss';
