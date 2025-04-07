@@ -1,7 +1,7 @@
 import React from 'react';
 import { PatientSection, ExaminationSection, ResultsSection } from '@/components/MedicalReport';
 
-import { Button } from '../atoms'
+import { Button } from '../../atoms'
 
 interface MedicalData {
   patient: {
@@ -60,7 +60,7 @@ export const TraditionalMedicalReport = () => {
           ]
         }
       ],
-      conclusion: "Необходимо проводиться добропорядоченным диагностическим этапам."
+      conclusion: "Необходимо проведение дообследования на диагностическом этапе."
     }
   };
 
@@ -81,7 +81,16 @@ export const TraditionalMedicalReport = () => {
         variant='secondary'
         size='small'
         wide
-        title={'asd'}
+        title={'Редактировать результат'}
+        isDisabled={false}
+      />
+
+      <Button
+        type='button'
+        variant='secondary'
+        size='small'
+        wide
+        title={'Результат удовлетворительный'}
         isDisabled={false}
       />
     </div>
