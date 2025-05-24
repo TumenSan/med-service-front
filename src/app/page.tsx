@@ -37,6 +37,16 @@ interface Feedback {
   };
 }
 
+interface Result {
+  modelId: number;
+  modelName: string;
+  result: {
+    class?: string; // Для классификации
+    confidence?: string; // Для классификации
+    maskUrl?: string; // Для сегментации
+  };
+}
+
 interface DeveloperModel {
   id: number;
   name: string;
@@ -65,6 +75,37 @@ const Home: React.FC = () => {
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('upload');
   const [developerSubTab, setDeveloperSubTab] = useState<string>('upload');
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [taskType, setTaskType] = useState<string>('');
+  const [selectedModels, setSelectedModels] = useState<Model[]>([]);
+  const [results, setResults] = useState<Result[]>([]);
+
+  // Генерация mock-результатов
+  const generateMockResult = (type: string) => {
+    switch (type) {
+      case 'classification':
+        return {
+          class: ['Horse', 'Zebra', 'Other'][Math.floor(Math.random() * 3)],
+          confidence: (Math.random() * 0.5 + 0.5).toFixed(2),
+        };
+      case 'segmentation':
+        return {
+          maskUrl: `https://placehold.co/600x400/FFD700/FFFFFF?text=Mask+ ${Math.floor(Math.random() * 100)}`,
+        };
+      default:
+        return {};
+    }
+  };
+
+  const runModels = () => {
+    if (!uploadedImage || selectedModels.length === 0) return;
+    const mockResults = selectedModels.map(model => ({
+      modelId: model.id,
+      modelName: model.name,
+      result: generateMockResult(model.taskType),
+    }));
+    setResults(mockResults);
+  };
 
   // Модели для выбора пользователя
   const availableModels: Model[] = [
@@ -188,7 +229,7 @@ const Home: React.FC = () => {
     alert('Модель успешно загружена!');
   };
 
-  // Темизация
+  // Тема
   document.documentElement.classList.toggle('dark', darkMode);
 
   return (
@@ -197,17 +238,31 @@ const Home: React.FC = () => {
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
     {/* Табы навигации */}
-    <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+    <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} results={results} />
 
-    {/* Контент страницы */}
+    {/* Контент вкладок */}
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         {/* Вкладка: Загрузка изображения */}
         {activeTab === 'upload' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Загрузка изображения</h2>
+            {/* Image Upload */}
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center dark:border-gray-600">
-              <input type="file" accept="image/*" id="image-upload" className="hidden" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => setUploadedImage(event.target?.result as string);
+                    reader.readAsDataURL(file);
+                  }
+                }}
+                className="hidden"
+                id="image-upload"
+              />
               <label htmlFor="image-upload" className="cursor-pointer block">
                 <svg className="w-12 h-12 text-gray-400 mb-2 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -216,7 +271,284 @@ const Home: React.FC = () => {
                 <p className="text-xs text-gray-400 mt-1">Поддерживаемые форматы: PNG, JPG</p>
               </label>
             </div>
-            <p className="text-center text-green-600 dark:text-green-400 mt-4">✅ Изображение не требуется для тестирования интерфейса.</p>
+
+            {uploadedImage && (
+              <>
+                <div className="mt-6">
+                  <label className="block text-sm font-medium mb-2">Тип задачи</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {['classification', 'segmentation'].map(type => (
+                      <button
+                        key={type}
+                        onClick={() => setTaskType(type)}
+                        className={`py-3 px-4 rounded-lg border text-center ${
+                          taskType === type
+                            ? 'bg-blue-100 border-blue-500 text-blue-700 dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-300'
+                            : 'border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <label className="block text-sm font-medium mb-2">Выберите модели для запуска</label>
+                  <div className="space-y-4">
+                    {availableModels.filter(model => model.taskType === taskType || taskType === '').map(model => (
+                      <div
+                        key={model.id}
+                        onClick={() => {
+                          if (selectedModels.some(m => m.id === model.id)) {
+                            setSelectedModels(selectedModels.filter(m => m.id !== model.id));
+                          } else {
+                            setSelectedModels([...selectedModels, model]);
+                          }
+                        }}
+                        className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                          selectedModels.some(m => m.id === model.id)
+                            ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/30 dark:border-blue-500'
+                            : 'border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-medium">{model.name}</h3>
+                            <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">{model.description}</p>
+                          </div>
+                          <div className="ml-2 flex-shrink-0">
+                            <span
+                              className={`inline-block w-4 h-4 rounded-full ${
+                                model.taskType === 'classification' ? 'bg-green-400' : 'bg-purple-400'
+                              }`}
+                            ></span>
+                          </div>
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-600 dark:text-gray-400">
+                          <div>
+                            <strong>Архитектура:</strong> {model.parameters?.architecture}
+                          </div>
+                          <div>
+                            <strong>Точность:</strong> {model.parameters?.accuracy}
+                          </div>
+                          <div>
+                            <strong>Время:</strong> {model.parameters?.inferenceTime}
+                          </div>
+                          <div>
+                            <strong>Размер:</strong> {model.parameters?.inputSize}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-8 flex justify-end">
+                  <button
+                    onClick={runModels}
+                    disabled={!taskType || selectedModels.length === 0}
+                    className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                      !taskType || selectedModels.length === 0
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+                        : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                    }`}
+                  >
+                    Запустить модели
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Results */}
+            {results.length > 0 && (
+              <div className="mt-8 space-y-6">
+                <h3 className="text-xl font-bold">Результаты анализа</h3>
+                <div className="relative bg-gray-100 rounded-lg overflow-hidden dark:bg-gray-800">
+                  <img src={uploadedImage ?? ''} alt="Uploaded" className="w-full max-h-96 object-contain mx-auto" />
+                  {taskType === 'segmentation' && results.length > 0 && (
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-black bg-opacity-40 flex items-center justify-center">
+                      <img
+                        src={results[0].result.maskUrl}
+                        alt="Segmentation Mask"
+                        className="absolute inset-0 w-full h-full object-cover opacity-60"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {results.map((result, index) => (
+                    <div key={index} className="bg-white p-6 rounded-lg shadow-md dark:bg-gray-800">
+                      <h3 className="text-lg font-semibold mb-4">{result.modelName}</h3>
+                      {taskType === 'classification' && (
+                        <div className="space-y-2">
+                          <p>Класс: <span className="font-medium">{result.result.class}</span></p>
+                          <p>Уверенность: <span className="font-medium">{result.result.confidence}</span></p>
+                        </div>
+                      )}
+                      {taskType === 'segmentation' && (
+                        <div className="mt-4">
+                          <img
+                            src={result.result.maskUrl}
+                            alt="Segmentation Mask"
+                            className="w-full h-48 object-cover rounded"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Вкладка: Оценка модели */}
+        {activeTab === 'evaluate' && uploadedImage && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Выберите тип задачи</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {['classification', 'segmentation'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setTaskType(type)}
+                  className={`py-3 px-4 rounded-lg border text-center transition-colors ${
+                    taskType === type
+                      ? 'bg-blue-100 border-blue-500 text-blue-700 dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-300'
+                      : 'border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {taskType && (
+              <>
+                <h2 className="text-2xl font-bold mt-6">Выберите модели</h2>
+                <div className="space-y-4">
+                  {availableModels
+                    .filter((model) => model.taskType === taskType)
+                    .map((model) => (
+                      <div
+                        key={model.id}
+                        onClick={() => {
+                          if (selectedModels.some((m) => m.id === model.id)) {
+                            setSelectedModels(
+                              selectedModels.filter((m) => m.id !== model.id)
+                            );
+                          } else {
+                            setSelectedModels([...selectedModels, model]);
+                          }
+                        }}
+                        className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                          selectedModels.some((m) => m.id === model.id)
+                            ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/30 dark:border-blue-500'
+                            : 'border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-medium">{model.name}</h3>
+                            <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
+                              {model.description}
+                            </p>
+                          </div>
+                          <div className="ml-2 flex-shrink-0">
+                            <span
+                              className={`inline-block w-4 h-4 rounded-full ${
+                                model.taskType === 'classification'
+                                  ? 'bg-green-400'
+                                  : 'bg-purple-400'
+                              }`}
+                            ></span>
+                          </div>
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-600 dark:text-gray-400">
+                          <div>
+                            <strong>Архитектура:</strong>{' '}
+                            {model.parameters?.architecture ?? '—'}
+                          </div>
+                          <div>
+                            <strong>Точность:</strong> {model.parameters?.accuracy ?? '—'}
+                          </div>
+                          <div>
+                            <strong>Время:</strong> {model.parameters?.inferenceTime ?? '—'}
+                          </div>
+                          <div>
+                            <strong>Размер:</strong> {model.parameters?.inputSize ?? '—'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                <div className="mt-8 flex justify-end">
+                  <button
+                    onClick={runModels}
+                    disabled={selectedModels.length === 0}
+                    className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                      selectedModels.length === 0
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+                        : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600'
+                    }`}
+                  >
+                    Запустить модели
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Результаты */}
+            {results.length > 0 && (
+              <div className="mt-8 space-y-6">
+                <h3 className="text-xl font-bold">Результаты анализа</h3>
+                <div className="relative bg-gray-100 rounded-lg overflow-hidden dark:bg-gray-800">
+                  <img
+                    src={uploadedImage}
+                    alt="Uploaded"
+                    className="w-full max-h-96 object-contain mx-auto"
+                  />
+                  {taskType === 'segmentation' && results.length > 0 && (
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-black bg-opacity-40 flex items-center justify-center">
+                      <img
+                        src={results[0].result.maskUrl}
+                        alt="Segmentation Mask"
+                        className="absolute inset-0 w-full h-full object-cover opacity-60"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {results.map((result, index) => (
+                    <div
+                      key={index}
+                      className="bg-white p-6 rounded-lg shadow-md dark:bg-gray-800"
+                    >
+                      <h3 className="text-lg font-semibold mb-4">{result.modelName}</h3>
+                      {taskType === 'classification' && (
+                        <div className="space-y-2">
+                          <p>
+                            Класс: <span className="font-medium">{result.result.class}</span>
+                          </p>
+                          <p>
+                            Уверенность: <span className="font-medium">{result.result.confidence}</span>
+                          </p>
+                        </div>
+                      )}
+                      {taskType === 'segmentation' && (
+                        <div className="mt-4">
+                          <img
+                            src={result.result.maskUrl}
+                            alt="Segmentation Mask"
+                            className="w-full h-48 object-cover rounded"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -446,6 +778,85 @@ const Home: React.FC = () => {
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Вкладка: Оценка модели */}
+        {activeTab === 'feedback' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Оценка модели</h2>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Оценка */}
+              <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-md dark:bg-gray-800">
+                <h3 className="text-lg font-semibold mb-4">Ваша оценка</h3>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Оценка модели</label>
+                  <div className="flex space-x-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => {}}
+                        className="focus:outline-none"
+                      >
+                        <svg
+                          className={`w-8 h-8 ${5 >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label htmlFor="comment" className="block text-sm font-medium mb-2">
+                    Комментарий
+                  </label>
+                  <textarea
+                    id="comment"
+                    rows={4}
+                    placeholder="Введите комментарий..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  ></textarea>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => alert('Спасибо за вашу оценку!')}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  >
+                    Отправить оценку
+                  </button>
+                </div>
+              </div>
+
+              {/* Выделение ошибки на изображении */}
+              <div className="lg:col-span-2 bg-gray-100 p-4 rounded-lg dark:bg-gray-700 relative">
+                <h3 className="text-lg font-semibold mb-4">Выделите область ошибки на изображении</h3>
+                <div className="relative bg-white rounded shadow-inner">
+                  {uploadedImage ? (
+                    <img src={uploadedImage} alt="Для отметки ошибок" className="w-full h-auto max-h-96" />
+                  ) : (
+                    <div className="w-full h-64 flex items-center justify-center text-gray-400 dark:text-gray-500">
+                      Изображение не загружено
+                    </div>
+                  )}
+                  {/* Пример выделенной области ошибки */}
+                  <div
+                    className="absolute border-2 border-red-500 p-1 bg-red-500 bg-opacity-30"
+                    style={{ left: '30%', top: '40%', width: '100px', height: '80px' }}
+                  >
+                    <div className="absolute -top-5 left-0 bg-red-500 text-white text-xs px-2 rounded">
+                      Обнаружена ошибка
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
