@@ -2,6 +2,10 @@
 
 // import Image from "next/image";
 import { useState } from 'react';
+import Header from '@/components/Header';
+import TabNavigation from '@/components/TabNavigation';
+import Footer from '@/components/Footer';
+// import DarkModeToggle from '@/components/DarkModeToggle';
 
 // Типы для модели
 interface ModelParams {
@@ -190,62 +194,10 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Навигационная панель */}
-      <header className="bg-white shadow-sm dark:bg-gray-800 dark:text-white sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h1 className="text-xl font-bold">AI Eval</h1>
-          </div>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-          >
-            {darkMode ? (
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-3-4a1 1 0 00-1-1H3a1 1 0 000 2h1a1 1 0 001-1zm1.414 4L2.98 9.48a1 1 0 000-1.41l.707-.707a1 1 0 00-1.414-1.414L0 7.48v1.04l2.07 2.07a1 1 0 001.414-1.414zm12 0l2.07-2.07a1 1 0 000-1.414l-.707-.707a1 1 0 00-1.414 1.414L17 7.48v1.04l-1.414 1.414a1 1 0 101.414 1.414zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.414 14.586a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm12 0a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 00-1 1v1a1 1 0 102 0V11a1 1 0 00-1-1zm11 0a1 1 0 00-1 1v1a1 1 0 102 0V11a1 1 0 00-1-1z" clipRule="evenodd" fillRule="evenodd" />
-            </svg>
-          ) : (
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-            </svg>
-          )}
-        </button>
-      </div>
-    </header>
+      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
     {/* Табы навигации */}
-    <nav className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-      <div className="container mx-auto px-4">
-        <ul className="flex flex-wrap -mb-px">
-          <li className="mr-6">
-            <button
-              onClick={() => setActiveTab('upload')}
-              className={`inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'upload'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-              }`}
-            >
-              Загрузка
-            </button>
-          </li>
-          <li className="mr-6">
-            <button
-              onClick={() => setActiveTab('developer')}
-              className={`inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'developer'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-              }`}
-            >
-              Разработчики
-            </button>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
 
     {/* Контент страницы */}
     <main className="container mx-auto px-4 py-8">
@@ -324,7 +276,7 @@ const Home: React.FC = () => {
                     >
                       <option value="">Выберите тип задачи</option>
                       {Array.from(new Set(availableModels.map(m => m.taskType))).map(type => (
-                        <option key={type} value={type}>
+                        <option key={type} value={type} selected={type === 'classification'}>
                           {type === 'classification' ? 'Классификация' : 'Сегментация'}
                         </option>
                       ))}
@@ -500,11 +452,7 @@ const Home: React.FC = () => {
     </main>
 
       {/* Футер */}
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-6">
-        <div className="container mx-auto px-4 text-center text-gray-600 dark:text-gray-400">
-          <p>© 2025 AI Eval. Все права защищены.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
