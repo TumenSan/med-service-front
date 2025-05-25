@@ -7,42 +7,37 @@ interface ModelCardProps {
   onSelect: () => void;
 }
 
-const ModelCard = ({ model, isSelected, onSelect }: ModelCardProps) => {
+const ModelCard: React.FC<ModelCardProps> = ({ model, isSelected, onSelect }) => {
+  const { parameters } = model;
+
   return (
-    <div
-      onClick={onSelect}
-      className={`p-4 rounded-lg border cursor-pointer transition-all ${
-        isSelected
-          ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/30 dark:border-blue-500'
-          : 'border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700'
-      }`}
-    >
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="font-medium">{model.name}</h3>
-          <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">{model.description}</p>
-        </div>
-        <div className="ml-2 flex-shrink-0">
-          <span
-            className={`inline-block w-4 h-4 rounded-full ${
-              model.taskType === 'classification' ? 'bg-green-400' : 'bg-purple-400'
-            }`}
-          ></span>
-        </div>
+    <div className={`bg-white p-4 rounded-lg shadow-md border transition-transform ${isSelected ? 'border-blue-500 scale-105' : 'border-gray-200 hover:scale-102'} dark:bg-gray-800 dark:border-gray-700`}>
+      <h3 className="text-lg font-semibold">{model.name}</h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{model.description}</p>
+
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+        <p><strong>Архитектура:</strong> {parameters.architecture}</p>
+        <p><strong>Точность:</strong> {parameters.accuracy}</p>
+        <p><strong>Фреймворк:</strong> {parameters.framework || '-'}</p>
+        <p><strong>Размер:</strong> {parameters.size || '-'}</p>
+        <p><strong>Устройства:</strong> {parameters.supportedDevices?.join(', ') || '-'}</p>
+        <p><strong>Лицензия:</strong> {parameters.license || '-'}</p>
+        <p><strong>Дата обновления:</strong> {parameters.updatedAt || '-'}</p>
+        <p><strong>Датасет:</strong> {parameters.dataset || '-'}</p>
       </div>
-      <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-600 dark:text-gray-400">
-        <div>
-          <strong>Архитектура:</strong> {model.parameters?.architecture}
-        </div>
-        <div>
-          <strong>Точность:</strong> {model.parameters?.accuracy}
-        </div>
-        <div>
-          <strong>Время:</strong> {model.parameters?.inferenceTime}
-        </div>
-        <div>
-          <strong>Размер:</strong> {model.parameters?.inputSize}
-        </div>
+
+      <div className="mt-3 flex justify-between items-center">
+        <span className="text-xs bg-gray-100 px-2 py-1 rounded-full dark:bg-gray-700">
+          {model.taskType === 'classification' ? 'Классификация' : 'Сегментация'}
+        </span>
+        <button
+          onClick={onSelect}
+          className={`px-3 py-1 text-sm rounded ${
+            isSelected ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+          }`}
+        >
+          {isSelected ? 'Выбрана' : 'Выбрать'}
+        </button>
       </div>
     </div>
   );
