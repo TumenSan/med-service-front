@@ -83,7 +83,11 @@ const Home: React.FC = () => {
       size: '150MB',
       supportedDevices: ['GPU', 'CPU'],
       updatedAt: '2024-09-20',
-      tags: ['fast', 'accurate', 'cpu-friendly']
+      tags: ['fast', 'accurate', 'cpu-friendly'],
+      version: 'v1.0.0',
+      author: 'Developer 1',
+      sourceCode: 'https://github.com/Developer_1/horsenet',
+      documentation: 'https://horsenet.io'
     }
     },
     {
@@ -102,7 +106,9 @@ const Home: React.FC = () => {
         size: '200MB',
         supportedDevices: ['GPU', 'TPU'],
         updatedAt: '2024-08-15',
-        tags: ['multi-class', 'high-memory']
+        tags: ['multi-class', 'high-memory'],
+        version: 'v2.1.0',
+        author: 'Developer 2',
       }
     },
     {
@@ -121,7 +127,8 @@ const Home: React.FC = () => {
         size: '80MB',
         supportedDevices: ['mobile', 'CPU'],
         updatedAt: '2024-07-10',
-        tags: ['lightweight', 'mobile', 'segmentation']
+        tags: ['lightweight', 'mobile', 'segmentation'],
+        author: 'Developer 3',
       }
     }
   ];

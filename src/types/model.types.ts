@@ -1,13 +1,6 @@
 import { Feedback } from "./feedback.types";
 
 // Типы для модели
-export interface ModelParams {
-  architecture: string;
-  accuracy: string;
-  inferenceTime: string;
-  inputSize: string;
-}
-
 export interface Model {
   id: number;
   name: string;
@@ -25,6 +18,10 @@ export interface Model {
     supportedDevices?: string[]; // например: ['GPU', 'CPU']
     updatedAt?: string; // например: 2024-09-20
     tags?: string[]; // например: ['fast', 'accurate']
+    version?: string; // Версия модели: v1.2.3
+    author?: string; // Автор модели
+    sourceCode?: string; // Ссылка на GitHub
+    documentation?: string; // Ссылка на документацию
   };
 }
 

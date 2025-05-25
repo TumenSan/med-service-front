@@ -24,6 +24,10 @@ const ModelCard: React.FC<ModelCardProps> = ({ model, isSelected, onSelect }) =>
         <p><strong>Лицензия:</strong> {parameters.license || '-'}</p>
         <p><strong>Дата обновления:</strong> {parameters.updatedAt || '-'}</p>
         <p><strong>Датасет:</strong> {parameters.dataset || '-'}</p>
+        <p><strong>Версия:</strong> {parameters.version || '-'}</p>
+        <p><strong>Автор:</strong> {parameters.author || '-'}</p>
+        <p><strong>Источник:</strong> {parameters.sourceCode || '-'}</p>
+        <p><strong>Документация:</strong> {parameters.documentation || '-'}</p>
       </div>
 
       <div className="mt-3 flex justify-between items-center">
