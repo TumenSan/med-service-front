@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 import { Feedback } from '@/types/feedback.types';
+import { ModelResult, ClassificationResult, SegmentationResult } from '@/types/results.types';
 
 interface FeedbackRegion {
   x: number;
@@ -9,12 +10,15 @@ interface FeedbackRegion {
   height: number;
 }
 
-interface ModelFeedbackProps {
+interface ModelFeedbackTabProps {
   uploadedImage: string | null;
   feedbacks: Feedback[];
+  result: ModelResult; // Результат модели: классификация или сегментация
+  taskType: string; // Тип задачи
 }
 
-const FeedbackTab: React.FC<ModelFeedbackProps> = ({ uploadedImage, feedbacks }) => {
+
+const FeedbackTab: React.FC<ModelFeedbackTabProps> = ({ uploadedImage, feedbacks, result, taskType }) => {
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState<string>('');
   const [errorRegion, setErrorRegion] = useState<FeedbackRegion | null>(null);
@@ -133,16 +137,17 @@ const FeedbackTab: React.FC<ModelFeedbackProps> = ({ uploadedImage, feedbacks })
           </div>
         </div>
 
-        {/* Выделение ошибки на изображении */}
-        <div
+        {/* Результат модели */}
+        <div 
           className="lg:col-span-2 bg-gray-100 p-4 rounded-lg dark:bg-gray-700 relative"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         >
-          <h3 className="text-lg font-semibold mb-4">Выделите область ошибки на изображении</h3>
+          <h3 className="text-lg font-semibold mb-4">Результат модели</h3>
+
           <div
-            ref={imageContainerRef}
+            ref={imageContainerRef} 
             className="relative bg-white rounded shadow-inner"
           >
             {uploadedImage ? (
@@ -157,40 +162,82 @@ const FeedbackTab: React.FC<ModelFeedbackProps> = ({ uploadedImage, feedbacks })
               </div>
             )}
 
-            {/* Выделенная область */}
-            {selectionBox && isSelecting && (
-              <div
-                className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-20"
-                style={{
-                  left: `${selectionBox.x}px`,
-                  top: `${selectionBox.y}px`,
-                  width: `${selectionBox.width}px`,
-                  height: `${selectionBox.height}px`,
-                }}
-              />
+            {/* Результат модели */}
+            {taskType === 'classification' && 'class' in result && (
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded text-sm">
+                <strong>Класс:</strong> {result.class}<br />
+                <strong>Точность:</strong> {(result as ClassificationResult).confidence}
+              </div>
             )}
 
-            {/* Сохранённая область ошибки */}
-            {errorRegion && (
-              <div
-                className="absolute border-2 border-red-500 bg-red-500 bg-opacity-30"
-                style={{
-                  left: `${errorRegion.x}px`,
-                  top: `${errorRegion.y}px`,
-                  width: `${errorRegion.width}px`,
-                  height: `${errorRegion.height}px`,
-                }}
-              >
-                <div className="absolute -top-5 left-0 bg-red-500 text-white text-xs px-2 rounded">
-                  Обнаружена ошибка
-                </div>
+            {taskType === 'segmentation' && 'maskUrl' in result && (
+              <div className="mt-4">
+                <strong>Маска:</strong>
+                <img
+                  src={(result as SegmentationResult).maskUrl}
+                  alt="Маска"
+                  className="w-full mt-2 rounded"
+                />
               </div>
             )}
           </div>
+
+          {/* Выделенная область ошибки */}
+          {taskType === 'segmentation' && (
+            <>
+              <div
+                ref={imageContainerRef}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                className="relative w-full h-auto mt-4 cursor-crosshair"
+              >
+                {uploadedImage && (
+                  <>
+                    <img
+                      src={uploadedImage}
+                      alt="Для выделения области"
+                      className="w-full h-auto max-h-96"
+                    />
+
+                    {/* Временная выделенная область */}
+                    {selectionBox && isSelecting && (
+                      <div
+                        className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-20"
+                        style={{
+                          left: `${selectionBox.x}px`,
+                          top: `${selectionBox.y}px`,
+                          width: `${selectionBox.width}px`,
+                          height: `${selectionBox.height}px`,
+                        }}
+                      />
+                    )}
+
+                    {/* Сохранённая область ошибки */}
+                    {errorRegion && (
+                      <div
+                        className="absolute border-2 border-red-500 bg-red-500 bg-opacity-30"
+                        style={{
+                          left: `${errorRegion.x}px`,
+                          top: `${errorRegion.y}px`,
+                          width: `${errorRegion.width}px`,
+                          height: `${errorRegion.height}px`,
+                        }}
+                      >
+                        <div className="absolute -top-5 left-0 bg-red-500 text-white text-xs px-2 rounded">
+                          Обнаружена ошибка
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Список отзывов */}
+      {/* Предыдущие отзывы */}
       {feedbacks.length > 0 && (
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">Предыдущие отзывы</h3>
@@ -213,19 +260,21 @@ const FeedbackTab: React.FC<ModelFeedbackProps> = ({ uploadedImage, feedbacks })
                 {feedback.image && (
                   <div className="relative inline-block border border-gray-300 rounded dark:border-gray-600">
                     <img src={feedback.image} alt="Пример ошибки" className="w-40 h-auto" />
-                    <div
-                      className="absolute border-2 border-red-500 bg-red-500 bg-opacity-30"
-                      style={{
-                        left: `${feedback.errorRegion?.x ?? 0}px`,
-                        top: `${feedback.errorRegion?.y ?? 0}px`,
-                        width: `${feedback.errorRegion?.width ?? 0}px`,
-                        height: `${feedback.errorRegion?.height ?? 0}px`,
-                      }}
-                    >
-                      <div className="absolute -top-5 left-0 bg-red-500 text-white text-xs px-2 rounded">
-                        Ошибка
+                    {feedback.errorRegion && (
+                      <div
+                        className="absolute border-2 border-red-500 bg-red-500 bg-opacity-30"
+                        style={{
+                          left: `${feedback.errorRegion.x}px`,
+                          top: `${feedback.errorRegion.y}px`,
+                          width: `${feedback.errorRegion.width}px`,
+                          height: `${feedback.errorRegion.height}px`,
+                        }}
+                      >
+                        <div className="absolute -top-5 left-0 bg-red-500 text-white text-xs px-2 rounded">
+                          Ошибка
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>

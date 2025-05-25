@@ -15,6 +15,7 @@ import FeedbackTab from '@/components/tabs/FeedbackTab';
 
 import { Model, DeveloperModel } from '@/types/model.types';
 import { NewModelData } from '@/types/new-model.types';
+import { ModelResult } from '@/types/results.types';
 
 interface Result {
   modelId: number;
@@ -35,9 +36,10 @@ const Home: React.FC = () => {
   const [taskType, setTaskType] = useState<string>('');
   const [selectedModels, setSelectedModels] = useState<Model[]>([]);
   const [results, setResults] = useState<Result[]>([]);
+  const [selectedFeedbackModel, setSelectedFeedbackModel] = useState<DeveloperModel | null>(null);
 
   // Генерация mock-результатов
-  const generateMockResult = (type: string) => {
+  const generateMockResult = (type: string): Result['result'] => {
     switch (type) {
       case 'classification':
         return {
@@ -113,6 +115,31 @@ const Home: React.FC = () => {
       architecture: 'MobileNet-V2',
       accuracy: '88%',
       inferenceTime: '25ms',
+      inputSize: '224x224',
+      feedbacks: [
+        {
+          id: 1,
+          rating: 4,
+          comment: 'Хорошая точность, но иногда путает молодых жеребят с зебрами.',
+          image: 'https://placehold.co/300x200/FFE4B2/000000?text=Sample+Image ',
+          errorRegion: { x: 80, y: 60, width: 50, height: 40 }
+        },
+        {
+          id: 2,
+          rating: 5,
+          comment: 'Отличная модель! Работает быстро и точно.',
+          image: null
+        }
+      ]
+    },
+    {
+      id: 102,
+      name: 'Custom Horse segmentation',
+      description: 'Разработанная пользователем модель для сегментации лошадей',
+      taskType: 'segmentation',
+      architecture: 'MobileNet-V2',
+      accuracy: '80%',
+      inferenceTime: '50ms',
       inputSize: '224x224',
       feedbacks: [
         {
@@ -542,7 +569,46 @@ const Home: React.FC = () => {
         )}
 
         {/* Вкладка: Оценка модели */}
-        {activeTab === 'feedback' && <FeedbackTab uploadedImage={uploadedImage} feedbacks={[]} />}
+        {activeTab === 'feedback' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Оценка модели</h2>
+
+            {/* Выбор модели */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Выберите модель</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                onChange={(e) => {
+                  const selected = developerModels.find(m => m.id === Number(e.target.value));
+                  setSelectedFeedbackModel(selected || null);
+                }}
+                value={selectedFeedbackModel?.id || ''}
+              >
+                <option value="">-- Выберите модель --</option>
+                {developerModels.map(model => (
+                  <option key={model.id} value={model.id}>
+                    {model.name} ({model.taskType})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Показываем FeedbackTab только если выбрана модель */}
+            {selectedFeedbackModel && (
+              <FeedbackTab
+                uploadedImage={uploadedImage}
+                feedbacks={selectedFeedbackModel.feedbacks}
+                result={
+                  (results.find(r => r.modelId === selectedFeedbackModel.id)?.result as ModelResult) || {
+                    class: 'Other',
+                    confidence: '0.5',
+                  }
+                }
+                taskType={selectedFeedbackModel.taskType}
+              />
+            )}
+          </div>
+        )}
       </div>
     </main>
 
@@ -551,5 +617,4 @@ const Home: React.FC = () => {
     </div>
   );
 };
-
 export default Home;
