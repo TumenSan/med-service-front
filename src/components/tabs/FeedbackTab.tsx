@@ -194,11 +194,6 @@ const FeedbackTab: React.FC<ModelFeedbackTabProps> = ({ uploadedImage, feedbacks
               >
                 {uploadedImage && (
                   <>
-                    <img
-                      src={uploadedImage}
-                      alt="Для выделения области"
-                      className="w-full h-auto max-h-96"
-                    />
 
                     {/* Временная выделенная область */}
                     {selectionBox && isSelecting && (
