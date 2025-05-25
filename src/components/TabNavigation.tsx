@@ -13,6 +13,18 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab, 
         <ul className="flex flex-wrap -mb-px">
           <li className="mr-6">
             <button
+              onClick={() => setActiveTab('models')}
+              className={`inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'models'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+            >
+              Модели
+            </button>
+          </li>
+          <li className="mr-6">
+            <button
               onClick={() => setActiveTab('upload')}
               className={`inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'upload'
@@ -20,7 +32,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab, 
                   : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
-              Загрузка
+              Анализировать изображения
             </button>
           </li>
           <li className="mr-6">

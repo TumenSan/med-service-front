@@ -238,6 +238,44 @@ const Home: React.FC = () => {
     {/* Контент вкладок */}
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
+        {/* Вкладка: Модели (каталог) */}
+        {activeTab === 'models' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Каталог моделей</h2>
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2">Фильтр по типу задачи</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                onChange={(e) => setTaskType(e.target.value)}
+                value={taskType}
+              >
+                <option value="">Все</option>
+                <option value="classification">Классификация</option>
+                <option value="segmentation">Сегментация</option>
+              </select>
+            </div>
+
+            <div className="space-y-4">
+              {availableModels
+                .filter(model => taskType === '' || model.taskType === taskType)
+                .map(model => (
+                  <ModelCard
+                    key={model.id}
+                    model={model}
+                    isSelected={selectedModels.some(m => m.id === model.id)}
+                    onSelect={() => {
+                      if (selectedModels.some(m => m.id === model.id)) {
+                        setSelectedModels(selectedModels.filter(m => m.id !== model.id));
+                      } else {
+                        setSelectedModels([...selectedModels, model]);
+                      }
+                    }}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
+
         {/* Вкладка: Загрузка изображения */}
         {activeTab === 'upload' && (
           <div className="space-y-6">
