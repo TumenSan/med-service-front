@@ -12,8 +12,20 @@ export interface Model {
   id: number;
   name: string;
   description: string;
-  taskType: string;
-  parameters?: ModelParams;
+  taskType: 'classification' | 'segmentation';
+  parameters: {
+    architecture: string; // например: ResNet-50, U-Net
+    accuracy: string; // например: 92%
+    inferenceTime: string; // например: 38ms
+    inputSize: string; // например: 224x224
+    framework?: string; // например: PyTorch, TensorFlow
+    dataset?: string; // например: ImageNet, Custom Horse Dataset
+    license?: string; // например: MIT, Apache
+    size?: string; // например: 150MB
+    supportedDevices?: string[]; // например: ['GPU', 'CPU']
+    updatedAt?: string; // например: 2024-09-20
+    tags?: string[]; // например: ['fast', 'accurate']
+  };
 }
 
 export interface Result {
@@ -27,10 +39,6 @@ export interface Result {
 }
 
 export interface DeveloperModel extends Model {
-  architecture: string;
-  accuracy: string;
-  inferenceTime: string;
-  inputSize: string;
   file?: string;
   feedbacks: Feedback[];
 }

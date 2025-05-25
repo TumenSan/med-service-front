@@ -68,16 +68,23 @@ const Home: React.FC = () => {
   // Модели для выбора пользователя
   const availableModels: Model[] = [
     {
-      id: 1,
-      name: 'HorseNet',
-      description: 'Модель классификации лошадей',
-      taskType: 'classification',
-      parameters: {
-        architecture: 'ResNet-50',
-        accuracy: '92%',
-        inferenceTime: '38ms',
-        inputSize: '224x224'
-      }
+    id: 1,
+    name: 'HorseNet',
+    description: 'Модель классификации лошадей',
+    taskType: 'classification',
+    parameters: {
+      architecture: 'ResNet-50',
+      accuracy: '92%',
+      inferenceTime: '38ms',
+      inputSize: '224x224',
+      framework: 'PyTorch',
+      dataset: 'ImageNet + Custom Horse Dataset',
+      license: 'MIT',
+      size: '150MB',
+      supportedDevices: ['GPU', 'CPU'],
+      updatedAt: '2024-09-20',
+      tags: ['fast', 'accurate', 'cpu-friendly']
+    }
     },
     {
       id: 2,
@@ -88,7 +95,14 @@ const Home: React.FC = () => {
         architecture: 'ResNet-70',
         accuracy: '90%',
         inferenceTime: '50ms',
-        inputSize: '224x224'
+        inputSize: '224x224',
+        framework: 'TensorFlow',
+        dataset: 'Custom Zebra-Horse Dataset',
+        license: 'Apache-2.0',
+        size: '200MB',
+        supportedDevices: ['GPU', 'TPU'],
+        updatedAt: '2024-08-15',
+        tags: ['multi-class', 'high-memory']
       }
     },
     {
@@ -100,64 +114,79 @@ const Home: React.FC = () => {
         architecture: 'U-Net',
         accuracy: '87%',
         inferenceTime: '120ms',
-        inputSize: '512x512'
+        inputSize: '512x512',
+        framework: 'ONNX',
+        dataset: 'Zebras Segmentation Dataset',
+        license: 'CC-BY-NC',
+        size: '80MB',
+        supportedDevices: ['mobile', 'CPU'],
+        updatedAt: '2024-07-10',
+        tags: ['lightweight', 'mobile', 'segmentation']
       }
     }
   ];
 
   // Загруженные модели от разработчика
   const [developerModels, setDeveloperModels] = useState<DeveloperModel[]>([
-    {
-      id: 101,
-      name: 'Custom Horse Classifier',
-      description: 'Разработанная пользователем модель для классификации лошадей',
-      taskType: 'classification',
+  {
+    id: 101,
+    name: 'Custom Horse Classifier',
+    description: 'Разработанная пользователем модель для классификации лошадей',
+    taskType: 'classification',
+    parameters: {
       architecture: 'MobileNet-V2',
       accuracy: '88%',
       inferenceTime: '25ms',
       inputSize: '224x224',
-      feedbacks: [
-        {
-          id: 1,
-          rating: 4,
-          comment: 'Хорошая точность, но иногда путает молодых жеребят с зебрами.',
-          image: 'https://placehold.co/300x200/FFE4B2/000000?text=Sample+Image ',
-          errorRegion: { x: 80, y: 60, width: 50, height: 40 }
-        },
-        {
-          id: 2,
-          rating: 5,
-          comment: 'Отличная модель! Работает быстро и точно.',
-          image: null
-        }
-      ]
     },
-    {
-      id: 102,
-      name: 'Custom Horse segmentation',
-      description: 'Разработанная пользователем модель для сегментации лошадей',
-      taskType: 'segmentation',
+    file: 'mobilenet-horse-classifier.onnx',
+    feedbacks: [
+      {
+        id: 1,
+        rating: 4,
+        comment: 'Хорошая точность, но иногда путает молодых жеребят с зебрами.',
+        image: 'https://placehold.co/300x200/FFE4B2/000000?text=Sample+Image ',
+        errorRegion: { x: 80, y: 60, width: 50, height: 40 }
+      },
+      {
+        id: 2,
+        rating: 5,
+        comment: 'Отличная модель! Работает быстро и точно.',
+        image: null,
+        errorRegion: undefined
+      }
+    ]
+  },
+  {
+    id: 102,
+    name: 'Custom Horse segmentation',
+    description: 'Разработанная пользователем модель для сегментации лошадей',
+    taskType: 'segmentation',
+    parameters: {
       architecture: 'MobileNet-V2',
       accuracy: '80%',
       inferenceTime: '50ms',
       inputSize: '224x224',
-      feedbacks: [
-        {
-          id: 1,
-          rating: 4,
-          comment: 'Хорошая точность, но иногда путает молодых жеребят с зебрами.',
-          image: 'https://placehold.co/300x200/FFE4B2/000000?text=Sample+Image ',
-          errorRegion: { x: 80, y: 60, width: 50, height: 40 }
-        },
-        {
-          id: 2,
-          rating: 5,
-          comment: 'Отличная модель! Работает быстро и точно.',
-          image: null
-        }
-      ]
-    }
-  ]);
+    },
+    file: 'mobilenet-horse-segmenter.onnx',
+    feedbacks: [
+      {
+        id: 1,
+        rating: 4,
+        comment: 'Хорошая точность, но иногда путает молодых жеребят с зебрами.',
+        image: 'https://placehold.co/300x200/FFE4B2/000000?text=Sample+Image ',
+        errorRegion: { x: 80, y: 60, width: 50, height: 40 }
+      },
+      {
+        id: 2,
+        rating: 5,
+        comment: 'Отличная модель! Работает быстро и точно.',
+        image: null,
+        errorRegion: undefined
+      }
+    ]
+  }
+]);
 
   // Данные формы добавления модели
   const [newModelData, setNewModelData] = useState<NewModelData>({
@@ -202,12 +231,22 @@ const Home: React.FC = () => {
       return;
     }
 
+    const taskType = newModelData.taskType as 'classification' | 'segmentation';
+
     const newModel: DeveloperModel = {
-      id: Date.now(),
-      ...newModelData,
-      feedbacks: [],
-      file: fileName
-    };
+    id: Date.now(),
+    name: newModelData.name,
+    description: newModelData.description,
+    taskType: taskType,
+    parameters: {
+      architecture: newModelData.architecture,
+      accuracy: newModelData.accuracy,
+      inferenceTime: newModelData.inferenceTime,
+      inputSize: newModelData.inputSize,
+    },
+    file: fileName,
+    feedbacks: []
+  };
 
     setDeveloperModels([...developerModels, newModel]);
     setNewModelData({
