@@ -9,7 +9,7 @@ export interface NewModelData {
   inferenceTime: string;
   inputSize: string;
   mime: string;
-  framework?: string; // например: PyTorch, TensorFlow
+  framework: string; // например: PyTorch, TensorFlow
   dataset?: string; // например: ImageNet, Custom Horse Dataset
   license?: string; // например: MIT, Apache
   size?: string; // например: 150MB

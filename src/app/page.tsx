@@ -288,6 +288,7 @@ const Home: React.FC = () => {
       architecture: '',
       accuracy: '',
       inferenceTime: '',
+      framework: '',
       inputSize: '',
       mime: ''
     });
@@ -534,29 +535,18 @@ const Home: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Точность</label>
+                      <label className="block text-sm font-medium mb-1">Тип файла</label>
                       <input
                         type="text"
-                        name="accuracy"
-                        value={newModelData.accuracy}
+                        name="inputSize"
+                        value={newModelData.mime}
                         onChange={handleInputChange}
-                        placeholder="например: 92%"
+                        placeholder="например: png"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Время инференса</label>
-                      <input
-                        type="text"
-                        name="inferenceTime"
-                        value={newModelData.inferenceTime}
-                        onChange={handleInputChange}
-                        placeholder="например: 38ms"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      />
-                    </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">Размер входного изображения</label>
                       <input
@@ -569,24 +559,35 @@ const Home: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">Тип файла</label>
-                      <input
-                        type="text"
-                        name="inputSize"
-                        value={newModelData.mime}
-                        onChange={handleInputChange}
-                        placeholder="например: png"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Фреймворк*</label>
+                      <label className="block text-sm font-medium mb-1">Фреймворк</label>
                       <input
                         type="text"
                         name="inputSize"
                         value={newModelData.framework}
                         onChange={handleInputChange}
                         placeholder="например: TensorFlow"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Время инференса</label>
+                      <input
+                        type="text"
+                        name="inferenceTime"
+                        value={newModelData.inferenceTime}
+                        onChange={handleInputChange}
+                        placeholder="например: 38ms"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Точность</label>
+                      <input
+                        type="text"
+                        name="accuracy"
+                        value={newModelData.accuracy}
+                        onChange={handleInputChange}
+                        placeholder="например: 92%"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
                     </div>
