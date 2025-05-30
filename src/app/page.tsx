@@ -37,6 +37,7 @@ const Home: React.FC = () => {
   const [selectedModels, setSelectedModels] = useState<Model[]>([]);
   const [results, setResults] = useState<Result[]>([]);
   const [selectedFeedbackModel, setSelectedFeedbackModel] = useState<DeveloperModel | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Генерация mock-результатов
   const generateMockResult = (type: string): Result['result'] => {
@@ -135,6 +136,18 @@ const Home: React.FC = () => {
       }
     }
   ];
+
+  // Фильтруем модели по запросу и типу задачи
+  const filteredModels = availableModels.filter(model => {
+    const matchesSearch = 
+      model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      model.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (model.parameters.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ?? false);
+
+    const matchesTaskType = taskType === '' || model.taskType === taskType;
+
+    return matchesSearch && matchesTaskType;
+  });
 
   // Загруженные модели от разработчика
   const [developerModels, setDeveloperModels] = useState<DeveloperModel[]>([
@@ -314,6 +327,20 @@ const Home: React.FC = () => {
         {activeTab === 'models' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Каталог моделей</h2>
+
+            {/* Поиск */}
+            <div>
+              <label htmlFor="search" className="block text-sm font-medium mb-1">Поиск модели</label>
+              <input
+                id="search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Поиск по названию, описанию или тегам..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+
             <div className="mb-6">
               <label className="block text-sm font-medium mb-2">Фильтр по типу задачи</label>
               <select
@@ -328,9 +355,10 @@ const Home: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              {availableModels
-                .filter(model => taskType === '' || model.taskType === taskType)
-                .map(model => (
+              {filteredModels.length === 0 ? (
+                <p className="text-center text-gray-500 dark:text-gray-400">Модели не найдены.</p>
+              ) : (
+                filteredModels.map(model => (
                   <ModelCard
                     key={model.id}
                     model={model}
@@ -343,11 +371,11 @@ const Home: React.FC = () => {
                       }
                     }}
                   />
-                ))}
+                ))
+              )}
             </div>
           </div>
         )}
-
         {/* Вкладка: Загрузка изображения */}
         {activeTab === 'upload' && (
           <div className="space-y-6">
