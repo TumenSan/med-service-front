@@ -580,7 +580,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Тип файла</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="mime"
                         value={newModelData.mime}
                         onChange={handleInputChange}
                         placeholder="например: png"
@@ -604,7 +604,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Фреймворк</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="framework"
                         value={newModelData.framework}
                         onChange={handleInputChange}
                         placeholder="например: TensorFlow"
@@ -637,7 +637,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Датасет*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="dataset"
                         value={newModelData.dataset}
                         onChange={handleInputChange}
                         placeholder="например: Датасет CIFAR-10"
@@ -648,7 +648,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Лицензия*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="license"
                         value={newModelData.license}
                         onChange={handleInputChange}
                         placeholder="например: MIT"
@@ -659,7 +659,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Размер модели*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="size"
                         value={newModelData.size}
                         onChange={handleInputChange}
                         placeholder="например: 200MB"
@@ -670,7 +670,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Поддерживаемые девайсы*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="supportedDevices"
                         value={newModelData.supportedDevices}
                         onChange={handleInputChange}
                         placeholder="например: CPU, GPU, TPU"
@@ -681,7 +681,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Теги*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="tags"
                         value={newModelData.tags}
                         onChange={handleInputChange}
                         placeholder="например: животные, медицина, машины"
@@ -692,7 +692,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Версия*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="version"
                         value={newModelData.version}
                         onChange={handleInputChange}
                         placeholder="например: 1.0"
@@ -703,7 +703,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Источник*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="sourceCode"
                         value={newModelData.sourceCode}
                         onChange={handleInputChange}
                         placeholder="например: https://github.com/tensorflow/models"
@@ -714,7 +714,7 @@ const Home: React.FC = () => {
                       <label className="block text-sm font-medium mb-1">Документация*</label>
                       <input
                         type="text"
-                        name="inputSize"
+                        name="documentation"
                         value={newModelData.documentation}
                         onChange={handleInputChange}
                         placeholder="например: https://www.tensorflow.org/api_docs/python/tf/keras/Model"
