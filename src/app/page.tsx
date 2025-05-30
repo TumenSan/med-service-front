@@ -77,6 +77,7 @@ const Home: React.FC = () => {
       accuracy: '92%',
       inferenceTime: '38ms',
       inputSize: '224x224',
+      mime: 'png',
       framework: 'PyTorch',
       dataset: 'ImageNet + Custom Horse Dataset',
       license: 'MIT',
@@ -100,6 +101,7 @@ const Home: React.FC = () => {
         accuracy: '90%',
         inferenceTime: '50ms',
         inputSize: '224x224',
+        mime: 'png',
         framework: 'TensorFlow',
         dataset: 'Custom Zebra-Horse Dataset',
         license: 'Apache-2.0',
@@ -121,6 +123,7 @@ const Home: React.FC = () => {
         accuracy: '87%',
         inferenceTime: '120ms',
         inputSize: '512x512',
+        mime: 'png',
         framework: 'ONNX',
         dataset: 'Zebras Segmentation Dataset',
         license: 'CC-BY-NC',
@@ -141,6 +144,7 @@ const Home: React.FC = () => {
     description: 'Разработанная пользователем модель для классификации лошадей',
     taskType: 'classification',
     parameters: {
+      mime: 'png',
       architecture: 'MobileNet-V2',
       accuracy: '88%',
       inferenceTime: '25ms',
@@ -170,6 +174,7 @@ const Home: React.FC = () => {
     description: 'Разработанная пользователем модель для сегментации лошадей',
     taskType: 'segmentation',
     parameters: {
+      mime: 'png',
       architecture: 'MobileNet-V2',
       accuracy: '80%',
       inferenceTime: '50ms',
@@ -203,7 +208,8 @@ const Home: React.FC = () => {
     architecture: '',
     accuracy: '',
     inferenceTime: '',
-    inputSize: ''
+    inputSize: '',
+    mime:''
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -246,6 +252,7 @@ const Home: React.FC = () => {
     description: newModelData.description,
     taskType: taskType,
     parameters: {
+      mime: newModelData.mime,
       architecture: newModelData.architecture,
       accuracy: newModelData.accuracy,
       inferenceTime: newModelData.inferenceTime,
@@ -263,7 +270,8 @@ const Home: React.FC = () => {
       architecture: '',
       accuracy: '',
       inferenceTime: '',
-      inputSize: ''
+      inputSize: '',
+      mime: ''
     });
     setSelectedFile(null);
     setFileName('');
@@ -540,6 +548,17 @@ const Home: React.FC = () => {
                         value={newModelData.inputSize}
                         onChange={handleInputChange}
                         placeholder="например: 224x224"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Тип файла</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.mime}
+                        onChange={handleInputChange}
+                        placeholder="например: png"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
                     </div>

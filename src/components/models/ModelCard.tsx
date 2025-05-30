@@ -20,6 +20,8 @@ const ModelCard: React.FC<ModelCardProps> = ({ model, isSelected, onSelect }) =>
         <p><strong>Точность:</strong> {parameters.accuracy}</p>
         <p><strong>Фреймворк:</strong> {parameters.framework || '-'}</p>
         <p><strong>Размер:</strong> {parameters.size || '-'}</p>
+        <p><strong>Тип файла:</strong> {parameters.mime || '-'}</p>
+        <p><strong>Размер входного изображения:</strong> {parameters.inputSize || '-'}</p>
         <p><strong>Устройства:</strong> {parameters.supportedDevices?.join(', ') || '-'}</p>
         <p><strong>Лицензия:</strong> {parameters.license || '-'}</p>
         <p><strong>Дата обновления:</strong> {parameters.updatedAt || '-'}</p>

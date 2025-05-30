@@ -8,4 +8,5 @@ export interface NewModelData {
   accuracy: string;
   inferenceTime: string;
   inputSize: string;
+  mime: string;
 }

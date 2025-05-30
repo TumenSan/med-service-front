@@ -11,6 +11,7 @@ export interface Model {
     accuracy: string; // например: 92%
     inferenceTime: string; // например: 38ms
     inputSize: string; // например: 224x224
+    mime: string; // Тип файла например: 'png'
     framework?: string; // например: PyTorch, TensorFlow
     dataset?: string; // например: ImageNet, Custom Horse Dataset
     license?: string; // например: MIT, Apache
