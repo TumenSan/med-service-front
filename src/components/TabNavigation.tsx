@@ -38,10 +38,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, setActiveTab, 
           <li className="mr-6">
             <button
               onClick={() => setActiveTab('evaluate')}
+              disabled={results.length === 0}
               className={`inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'evaluate'
                   ? 'border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  : results.length === 0
+                    ? 'border-transparent text-gray-300 cursor-not-allowed dark:text-gray-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
               Результаты
