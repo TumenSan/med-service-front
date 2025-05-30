@@ -428,10 +428,23 @@ const Home: React.FC = () => {
 
                 <div className="mt-6">
                   <h2 className="text-xl font-bold mb-3">Выберите модели для анализа</h2>
+                  {/* Поиск */}
+                  <div className="mb-6">
+                    <label htmlFor="search" className="block text-sm font-medium mb-1">Поиск модели</label>
+                    <input
+                      id="search"
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Поиск по названию, описанию или тегам..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
                   <div className="space-y-4">
-                    {availableModels
-                      .filter(model => model.taskType === taskType || taskType === '')
-                      .map(model => (
+                    {filteredModels.length === 0 ? (
+                      <p className="text-center text-gray-500 dark:text-gray-400">Модели не найдены.</p>
+                    ) : (
+                      filteredModels.map(model => (
                         <ModelCard
                           key={model.id}
                           model={model}
@@ -444,7 +457,8 @@ const Home: React.FC = () => {
                             }
                           }}
                         />
-                      ))}
+                      ))
+                    )}
                   </div>
                 </div>
 
