@@ -209,7 +209,16 @@ const Home: React.FC = () => {
     accuracy: '',
     inferenceTime: '',
     inputSize: '',
-    mime:''
+    mime:'',
+    framework: '', 
+    dataset: '', 
+    license: '', 
+    size: '', 
+    supportedDevices: [],  
+    tags: '', 
+    version: '',
+    sourceCode: '',
+    documentation: '',
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -257,6 +266,15 @@ const Home: React.FC = () => {
       accuracy: newModelData.accuracy,
       inferenceTime: newModelData.inferenceTime,
       inputSize: newModelData.inputSize,
+      framework: newModelData.framework, // например: PyTorch, TensorFlow
+      dataset: newModelData.dataset, // например: ImageNet, Custom Horse Dataset
+      license: newModelData.license, // например: MIT, Apache
+      size: newModelData.size, // например: 150MB
+      supportedDevices: newModelData.supportedDevices, // например: ['GPU', 'CPU']
+      tags: newModelData.tags ? newModelData.tags.split(',').map(tag => tag.trim()) : undefined, // например: ['fast', 'accurate']
+      version: newModelData.version, // Версия модели: v1.2.3
+      sourceCode: newModelData.sourceCode, // Ссылка на GitHub
+      documentation: newModelData.documentation // Ссылка на документацию
     },
     file: fileName,
     feedbacks: []
@@ -277,7 +295,6 @@ const Home: React.FC = () => {
     setFileName('');
     alert('Модель успешно загружена!');
   };
-
   // Тема
   document.documentElement.classList.toggle('dark', darkMode);
 
@@ -559,6 +576,105 @@ const Home: React.FC = () => {
                         value={newModelData.mime}
                         onChange={handleInputChange}
                         placeholder="например: png"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Фреймворк*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.framework}
+                        onChange={handleInputChange}
+                        placeholder="например: TensorFlow"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Датасет*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.dataset}
+                        onChange={handleInputChange}
+                        placeholder="например: Датасет CIFAR-10"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Лицензия*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.license}
+                        onChange={handleInputChange}
+                        placeholder="например: MIT"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Размер модели*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.size}
+                        onChange={handleInputChange}
+                        placeholder="например: 200MB"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Поддерживаемые девайсы*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.supportedDevices}
+                        onChange={handleInputChange}
+                        placeholder="например: CPU, GPU, TPU"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Теги*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.tags}
+                        onChange={handleInputChange}
+                        placeholder="например: животные, медицина, машины"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Версия*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.version}
+                        onChange={handleInputChange}
+                        placeholder="например: 1.0"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Источник*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.sourceCode}
+                        onChange={handleInputChange}
+                        placeholder="например: https://github.com/tensorflow/models"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Документация*</label>
+                      <input
+                        type="text"
+                        name="inputSize"
+                        value={newModelData.documentation}
+                        onChange={handleInputChange}
+                        placeholder="например: https://www.tensorflow.org/api_docs/python/tf/keras/Model"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       />
                     </div>
